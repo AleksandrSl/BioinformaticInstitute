@@ -27,7 +27,7 @@ def find_reads_GC_content_v2(fastq_file_name):
     reads_GC_content = collections.defaultdict(int)  # Cool stuff
     with open(fastq_file_name, 'r') as fastq:
         for i, line in enumerate(fastq):
-            if i % 4 == 1:   # since every fourth string is a coding sequence
+            if i % 4 == 1:   # since every fourth string starting from the first is a coding sequence
                 GC_content = find_GC_content(line)
                 reads_GC_content[GC_content] += 1
     return reads_GC_content
@@ -52,4 +52,8 @@ with open('reads_GC_content', 'r') as file1, open('reads_GC_content_v2', 'r') as
     for line1, line2 in zip(file1, file2):
         if line1 == line2:
             count += 1
+        else:
+            count -= 1
     print(count)
+
+
