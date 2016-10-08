@@ -105,7 +105,7 @@ if __name__ == '__main__':
                     dest='output_file_name',
                     default='output',
                     help='Name of the output file without extention. All chars after . will be discarded')
-    parser.add_argument('--nucleotides_prob', nargs='+', type=int,
+    parser.add_argument('--nucleotides_prob', nargs=4, type=int,
                     dest='nucleotides_probabilities',
                     default=argparse.SUPPRESS,
                     help='Desired nucleotides probabilities in next order: A T G C')
