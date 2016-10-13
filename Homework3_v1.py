@@ -5,42 +5,49 @@ import random
 import numpy
 
 
-# class genome(object):
-#     size = None
+class Genome(object):
 
-def generate_genome_v1(size, gc_content=None, nucleotides_probabilities=None):
-    '''
-    generate sequence with known gc content or known nucleotides probabilities
-    :param size:
-    :param gc_content:
-    :param nucleotides_probabilities:
-    :return: string sequence
-    '''
-    genome = '' # [] try
-    if gc_content:
-        gc_content /= 100
-        at_content = 1 - gc_content
-        nucleotides_probabilities = [at_content / 2, at_content / 2, gc_content / 2, gc_content / 2]
+    size = None
+    gc_content = None
+    nucleotides_probabilities = None
+    sequence = None
 
-        numpy.random.choice(['A', 'T', 'G', 'C'], p=nucleotides_probabilities)
-    else:
-        nucleotides_probabilities = [el/100 for el in nucleotides_probabilities] # In python2 this will not work
-    for i in range(size):
-        genome += numpy.random.choice(['A', 'T', 'G', 'C'], p=nucleotides_probabilities)
-    return genome
+    def __init__(self, size, gc_content=None, nucleotides_probabilities=None):
+        self.size = size
+        self.gc_content = gc_content
+        self.nucleotides_probabilities = nucleotides_probabilities
+        self.generate_genome_v1()
 
+    def generate_genome_v1(self):
 
-def generate_genome_v2(size):
-    '''
-    generate sequence with even distribution of nucleotides
-    :param size:
-    :return: string sequence
-    '''
-    # Both version of generate_genome works well
-    genome = ''
-    for i in range(size):
-        genome += random.choice('ACGT')
-    return genome
+        self.sequence = [] # [] try
+        if self.gc_content:
+            self.gc_content /= 100
+            at_content = 1 - self.gc_content
+            self.nucleotides_probabilities = [at_content / 2, at_content / 2, self.gc_content / 2, self.gc_content / 2]
+
+            numpy.random.choice(['A', 'T', 'G', 'C'], p=self.nucleotides_probabilities)
+        else:
+            self.nucleotides_probabilities = [el/100 for el in self.nucleotides_probabilities] # In python2 this will not work
+        for i in range(self.size):
+            self.sequence.append(numpy.random.choice(['A', 'T', 'G', 'C'], p=self.nucleotides_probabilities))
+
+        return None
+
+    def get_sequence(self):
+        return ''.join(self.sequence)
+
+    #def generate_genome_v2(size):     # Deprecated
+    #    '''
+    #    generate sequence with even distribution of nucleotides
+    #    :param size:
+    #    :return: string sequence
+    #    '''
+    #    # Both version of generate_genome works well
+    #    genome = ''
+    #    for i in range(size):
+    #        genome += random.choice('ACGT')
+    #    return genome
 
 
 
@@ -54,8 +61,6 @@ def btw_n_and_m(n, m, k):
 
 def gc_content_restriction(k):
     return btw_n_and_m(4, 90, k)
-
-
 
 
 # import collections # Test to random functions, whether they have similar "error rate"
@@ -82,13 +87,14 @@ def gc_content_restriction(k):
 #     chi_m2 += t2
 # print(chi_m1/100000, chi_m2/100000)
 
-def generate_genome_wrapper(size, gc_content=None, nucleotides_probabilities=None):
 
-    if gc_content or nucleotides_probabilities:
-        genome = generate_genome_v1(size, gc_content, nucleotides_probabilities)
-    else:
-        genome = generate_genome_v2(size)
-    return genome
+#def generate_genome_wrapper(size, gc_content=None, nucleotides_probabilities=None): # Deprecated
+#
+#    if gc_content or nucleotides_probabilities:
+#        genome = generate_genome_v1(size, gc_content, nucleotides_probabilities)
+#    else:
+#        genome = generate_genome_v2(size)
+#    return genome
 
 
 def generate_reads_from_genome(genome, reads_number, reads_length):
@@ -117,16 +123,18 @@ def generate_random_reads_from_genome(genome, reads_number, reads_length):
         reads.append(genome[start_pos: end_pos])
     return reads
 
-def generate_fasta(reads_number, reads_length, func, genom_size, output_file_name, gc_content=None, nucleotides_probabilities=None):
+def generate_fasta(reads_number, reads_length, func, genom_size, output_file_name, gc_content=None,
+                   nucleotides_probabilities=(25, 25, 25, 25)):
     func_dict = {1: generate_reads_from_genome, 2: generate_random_reads_from_genome}
     func = func_dict[func]
     # TODO: if there is . then don't add ext
     output_file_name = output_file_name.split('.')[0] + '.fasta'
-    genome = generate_genome_wrapper(genom_size, gc_content, nucleotides_probabilities)
+    genome = Genome(genom_size, gc_content, nucleotides_probabilities)
     # print(genome)
 
     with open(output_file_name, 'w') as file:
-        for number, read in enumerate(func(genome, reads_number, reads_length)):
+        print(genome.sequence)
+        for number, read in enumerate(func(genome.get_sequence(), reads_number, reads_length)):
             file.write('> noname read {}\n'.format(number + 1))
             # print(read)
             for i in range(math.ceil(reads_length / 80)): # Interesting int(21 / 5) + (21 % 5 > 0)
