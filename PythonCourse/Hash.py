@@ -43,7 +43,7 @@ def str_hash_v2(s): # python 2.x
 def str_hash_v3(s): # python 3.x
     x = ord(s[0]) << 7
     for char in s:
-        x = (1000003*x) ^ ord(char)
+        x = (1000003 * x) ^ ord(char)
     x ^= len(s) # Maybe Py_SIZE is size of object in bytes
     if x == -1:
         x = -2
@@ -80,7 +80,7 @@ def tuple_hash(t):
         if y == -1:
             return -1
         x = (x ^ y) * mult
-        mult += (82520 + 2*len(t))
+        mult += (82520 + 2 * len(t))
     x += 97531
     if x == -1:
         x = -2
