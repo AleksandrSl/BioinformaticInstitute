@@ -6,20 +6,11 @@ def str_hash(s): #sdbm
         hash_ = ord(el) + (hash_ << 6) + (hash_ << 16) - hash_
     return hash_
 
+
 def c_mul(a, b):
     #C type multiplication
     return eval(hex((int(a) * b) & 0xFFFFFFFF)[:-1])
 
-def str_hash_v2(s): # python 2.x
-    if not s:
-        return 0 # empty
-    value = ord(s[0]) << 7
-    for char in s:
-        value = c_mul(1000003, value) ^ ord(char)
-    value = value ^ len(s)
-    if value == -1:
-        value = -2
-    return value
 
 #string_hash(PyStringObject *a)
 
@@ -40,7 +31,7 @@ def str_hash_v2(s): # python 2.x
  	    # a->ob_shash = x;
  	    # return x;
 
-def str_hash_v3(s): # python 3.x
+def str_hash_v3(s): # python 2.x
     x = ord(s[0]) << 7
     for char in s:
         x = (1000003 * x) ^ ord(char)
