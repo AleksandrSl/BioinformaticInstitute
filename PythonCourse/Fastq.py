@@ -14,7 +14,8 @@ class FastqRead():
                 temp.append(next(fastq_handle).strip())
             if not temp[0].startswith('@') or temp[1][0] not in 'ACTG':
                 raise ValueError('This is not a fastq file')
-            assert len(temp[1]) == len(temp[3])
+            if not len(temp[1]) == len(temp[3]):
+                raise ValueError('Sequence and quality are not of the same length')
             self.name, self.sequence, _, self.quality = temp
             self.length = len(self.sequence)
             # self.min_aver_qual = min_aver_qual
@@ -27,16 +28,10 @@ class FastqRead():
         return round(sum(translated_quality_seq) / self.length, 3)
 
     def seq_at(self, i):
-        if i >= 0 and i < self.length:
             return self.sequence[i]
-        else:
-            raise IndexError()
 
     def qual_at(self, i):
-        if i >= 0 and i < self.length:
-            return self.quality[i]
-        else:
-            raise IndexError()
+        return self.quality[i]
 
     def good(self):
         return self.aver_qual() > self.min_aver_qual
