@@ -12,32 +12,31 @@ class FastqRead():
             temp = []
             for _ in range(4):
                 temp.append(next(fastq_handle).strip())
-            if not temp[0].startswith('@') or temp[1][0] not in 'ACTG':
+            if not temp[0].startswith('@') or temp[1][0] not in 'ACTGN':
                 raise ValueError('This is not a fastq file')
             if not len(temp[1]) == len(temp[3]):
                 raise ValueError('Sequence and quality are not of the same length')
             self.name, self.sequence, _, self.quality = temp
-            self.length = len(self.sequence)
             # self.min_aver_qual = min_aver_qual
             # self.i = 0
         except StopIteration:
             print('The end of file reached!')
 
-    def aver_qual(self, zero_char = '!'):
+    def aver_qual(self, zero_char='!'):
         translated_quality_seq = [ord(el) - ord(zero_char) for el in self.quality]
-        return round(sum(translated_quality_seq) / self.length, 3)
+        return round(sum(translated_quality_seq) / len(self.sequence), 3)
 
     def seq_at(self, i):
-            return self.sequence[i]
+        return self.sequence[i]
 
     def qual_at(self, i):
         return self.quality[i]
 
     def good(self):
-        return self.aver_qual() > self.min_aver_qual
+        return self.aver_qual() > FastqRead.min_aver_qual
 
     def __len__(self):
-        return self.length
+        return len(self.sequence)
 
     def __str__(self):
         return "{}\n{}\n+\n{}".format(self.name, self.sequence, self.quality)
@@ -54,7 +53,7 @@ class FastqRead():
 
     def __iter__(self): # Generator
         counter = 0
-        while counter < self.length:
+        while counter < self.sequence:
             yield self[counter]
             counter += 1
 
