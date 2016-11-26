@@ -6,7 +6,6 @@ class FastqRead():
     # sequence = [] Я так полагаю от этого смысла нет
     # quality = []
     # name = ''
-
     def __init__(self, fastq_handle):
         try:
             temp = []

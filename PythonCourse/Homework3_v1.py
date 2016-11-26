@@ -21,9 +21,14 @@ class Genome(object):
             self.gc_content /= 100
             at_content = 1 - self.gc_content
             self.nucleotides_probabilities = [at_content / 2, at_content / 2, self.gc_content / 2, self.gc_content / 2]
-            numpy.random.choice(['A', 'T', 'G', 'C'], p=self.nucleotides_probabilities)
         else:
-            self.nucleotides_probabilities = [el/100 for el in self.nucleotides_probabilities] # In python2 this will not work
+            prob = round(random.random(), 3)
+            if prob < 0.4:
+                prob *= 2
+            elif prob > 0.8:
+                prob /= 2
+            print(prob / 2, prob / 2, (1 - prob) / 2, (1 - prob) / 2)
+            self.nucleotides_probabilities = [prob / 2, prob / 2, (1 - prob) / 2, (1 - prob) / 2] # In python2 this will not work
         for i in range(self.size):
             self.sequence.append(numpy.random.choice(['A', 'T', 'G', 'C'], p=self.nucleotides_probabilities))
         return None
